@@ -2,6 +2,7 @@ package com.instantgame.service;
 
 import com.instantgame.model.ProjectBrief;
 import com.instantgame.service.agent.Agent;
+import com.instantgame.service.agent.AgentCollaborationContext;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -110,6 +111,8 @@ public final class PipelineRunner {
         - Music Styles: %s
         - Major Mechanics: %s
         - Minor Mechanics: %s
+        - Collaboration Rounds: %d
+        - Competence Profile: %s
         - Other Notes: %s
         - External Agent Commands: %s
         """
@@ -128,6 +131,8 @@ public final class PipelineRunner {
                     ", ", brief.majorMechanics().isEmpty() ? List.of("None selected") : brief.majorMechanics()),
                 String.join(
                     ", ", brief.minorMechanics().isEmpty() ? List.of("None selected") : brief.minorMechanics()),
+                brief.collaborationRounds(),
+                brief.competenceProfile(),
                 brief.otherNotes().isBlank() ? "None provided" : brief.otherNotes(),
                 brief.agentCommands().isEmpty()
                     ? "None configured"
@@ -189,13 +194,80 @@ public final class PipelineRunner {
   private void runImplementStage(
       ProjectBrief brief, Path implementDirectory, int cycle, Set<String> selectedAgentKeys)
       throws IOException {
+    int rounds = Math.max(1, brief.collaborationRounds());
+    Path collaborationDirectory = implementDirectory.resolve("collaboration");
+    Files.createDirectories(collaborationDirectory);
+
+    Map<String, Path> artifactPaths = new LinkedHashMap<>();
     for (String key : selectedAgentKeys) {
-      Agent agent = agentsByKey.get(key);
-      if (agent == null) {
-        throw new IllegalArgumentException("No agent registered for key: " + key);
-      }
-      agent.generate(brief, implementDirectory, cycle);
+      Agent agent = requireAgent(key);
+      artifactPaths.put(key, agent.artifactPath(implementDirectory, cycle));
     }
+
+    String sharedSummary = "Round 0 baseline: no artifacts generated yet.";
+
+    for (int round = 1; round <= rounds; round++) {
+      for (String key : selectedAgentKeys) {
+        Agent agent = requireAgent(key);
+        AgentCollaborationContext context =
+            new AgentCollaborationContext(
+                round,
+                rounds,
+                brief.competenceProfile(),
+                sharedSummary,
+                Map.copyOf(artifactPaths));
+        agent.generate(brief, implementDirectory, cycle, context);
+      }
+      sharedSummary = buildSharedSummary(round, artifactPaths, brief.competenceProfile());
+      writeRoundSummary(collaborationDirectory, round, sharedSummary);
+    }
+  }
+
+  private Agent requireAgent(String key) {
+    Agent agent = agentsByKey.get(key);
+    if (agent == null) {
+      throw new IllegalArgumentException("No agent registered for key: " + key);
+    }
+    return agent;
+  }
+
+  private static void writeRoundSummary(Path collaborationDirectory, int round, String sharedSummary)
+      throws IOException {
+    Files.writeString(
+        collaborationDirectory.resolve("round-%d-shared-context.md".formatted(round)),
+        sharedSummary,
+        StandardCharsets.UTF_8,
+        StandardOpenOption.CREATE,
+        StandardOpenOption.TRUNCATE_EXISTING,
+        StandardOpenOption.WRITE);
+  }
+
+  private static String buildSharedSummary(
+      int round, Map<String, Path> artifactPaths, String competenceProfile) throws IOException {
+    StringBuilder builder = new StringBuilder();
+    builder.append("# Collaboration Summary - Round ").append(round).append("\n\n");
+    builder.append("- Competence Profile: ").append(competenceProfile).append("\n");
+    builder.append("- Objective: cross-critique and refine all agent outputs.\n\n");
+
+    for (Map.Entry<String, Path> entry : artifactPaths.entrySet()) {
+      builder.append("## ").append(entry.getKey()).append(" Artifact\n");
+      builder.append("- Path: ").append(entry.getValue()).append("\n");
+      if (!Files.exists(entry.getValue())) {
+        builder.append("- Status: missing\n\n");
+        continue;
+      }
+
+      String content = Files.readString(entry.getValue(), StandardCharsets.UTF_8).trim();
+      String condensed = content.replaceAll("\\s+", " ");
+      String excerpt = condensed.length() > 500 ? condensed.substring(0, 500) + "..." : condensed;
+      builder.append("- Excerpt: ").append(excerpt.isBlank() ? "<empty>" : excerpt).append("\n\n");
+    }
+
+    builder.append("## Refinement Focus\n");
+    builder.append("- Improve alignment between code, art, and music.\n");
+    builder.append("- Raise specificity and implementation clarity.\n");
+    builder.append("- Preserve testability and delivery realism.\n");
+    return builder.toString();
   }
 
   private static void runTestStage(
@@ -206,6 +278,10 @@ public final class PipelineRunner {
     Path scaffoldPlan = cycleDirectory.resolve("map/scaffold-plan.md");
     if (!Files.exists(scaffoldPlan)) {
       failures.add("Missing map/scaffold-plan.md");
+    }
+    Path collaborationSummary = cycleDirectory.resolve("implement/collaboration/round-1-shared-context.md");
+    if (!Files.exists(collaborationSummary)) {
+      failures.add("Missing implement/collaboration/round-1-shared-context.md");
     }
 
     if (selectedAgentKeys.contains("code")

@@ -41,6 +41,8 @@ public final class BriefParser {
     String targetPlatforms = "";
     String otherNotes = "";
     int iterations = 1;
+    int collaborationRounds = 2;
+    String competenceProfile = "extreme-99999";
 
     List<String> genres = new ArrayList<>();
     List<String> artStyles = new ArrayList<>();
@@ -84,6 +86,13 @@ public final class BriefParser {
           otherNotes = normalizeValue(value);
         } else if (key.equalsIgnoreCase("Iterations")) {
           iterations = parseIterations(value);
+        } else if (key.equalsIgnoreCase("Collaboration Rounds")) {
+          collaborationRounds = parsePositiveInteger(value, "Collaboration Rounds");
+        } else if (key.equalsIgnoreCase("Competence Profile")) {
+          String parsedProfile = normalizeValue(value);
+          if (!parsedProfile.isBlank()) {
+            competenceProfile = parsedProfile;
+          }
         } else if (key.toLowerCase(Locale.ROOT).endsWith("agent command")) {
           String agentKey = normalizeAgentLabel(key.replaceAll("(?i)\\s*command$", ""));
           String command = normalizeValue(value);
@@ -174,23 +183,29 @@ public final class BriefParser {
         enabledAgents,
         agentCommands,
         iterations,
-        otherNotes);
+        otherNotes,
+        collaborationRounds,
+        competenceProfile);
   }
 
   private static int parseIterations(String value) {
+    return parsePositiveInteger(value, "Iterations");
+  }
+
+  private static int parsePositiveInteger(String value, String fieldName) {
     String normalized = normalizeValue(value);
     if (normalized.isEmpty()) {
-      throw new IllegalArgumentException("Iterations cannot be empty.");
+      throw new IllegalArgumentException(fieldName + " cannot be empty.");
     }
 
     try {
       int parsed = Integer.parseInt(normalized);
       if (parsed < 1) {
-        throw new IllegalArgumentException("Iterations must be at least 1.");
+        throw new IllegalArgumentException(fieldName + " must be at least 1.");
       }
       return parsed;
     } catch (NumberFormatException exception) {
-      throw new IllegalArgumentException("Iterations must be a whole number.", exception);
+      throw new IllegalArgumentException(fieldName + " must be a whole number.", exception);
     }
   }
 

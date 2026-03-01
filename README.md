@@ -52,12 +52,29 @@ Each configured command receives:
 - `INSTANTGAME_PROJECT_NAME`
 - `INSTANTGAME_CYCLE`
 - `INSTANTGAME_OUTPUT_PATH`
+- `INSTANTGAME_COLLAB_ROUND`
+- `INSTANTGAME_COLLAB_TOTAL_ROUNDS`
+- `INSTANTGAME_COLLAB_ENABLED`
+- `INSTANTGAME_COMPETENCE_PROFILE`
+- `INSTANTGAME_SHARED_CONTEXT`
+- `INSTANTGAME_PEER_ARTIFACTS`
 
 Command behavior:
 
 - If stdout is produced, InstantGame writes it to the agent artifact file.
 - If stdout is empty, the command must write to `INSTANTGAME_OUTPUT_PATH`.
 - If no command is configured, InstantGame uses the built-in fallback templates.
+
+## Agent Collaboration
+
+`GENERATE.md` now includes:
+
+- `Collaboration Rounds` (default: `2`)
+- `Competence Profile` (default: `extreme-99999`)
+
+During each cycle, agents run multiple refinement rounds and exchange shared context via:
+
+`implement/collaboration/round-<n>-shared-context.md`
 
 ## Notes
 

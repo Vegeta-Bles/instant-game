@@ -48,6 +48,52 @@ class AgentCommandExecutorTest {
   }
 
   @Test
+  void passesCollaborationEnvironmentVariablesToCommand() throws Exception {
+    ProjectBrief brief =
+        new ProjectBrief(
+            "Collab Prompt Game",
+            "Pitch",
+            "Loop",
+            "Desktop",
+            List.of(),
+            List.of(),
+            List.of(),
+            Set.of("code"),
+            Map.of(
+                "code",
+                "printf 'ROUND=%s\\nTOTAL=%s\\nENABLED=%s\\nPROFILE=%s\\nSHARED=%s\\nPEERS=%s\\n' "
+                    + "\"$INSTANTGAME_COLLAB_ROUND\" \"$INSTANTGAME_COLLAB_TOTAL_ROUNDS\" "
+                    + "\"$INSTANTGAME_COLLAB_ENABLED\" \"$INSTANTGAME_COMPETENCE_PROFILE\" "
+                    + "\"$INSTANTGAME_SHARED_CONTEXT\" \"$INSTANTGAME_PEER_ARTIFACTS\""),
+            1);
+
+    AgentCommandExecutor executor = new AgentCommandExecutor(Duration.ofSeconds(5));
+    Path output = tempDir.resolve("code.md");
+    Path codeArtifact = tempDir.resolve("implement/code/cycle-1-implementation.md");
+    Path artArtifact = tempDir.resolve("implement/art/cycle-1-art-direction.md");
+    AgentCollaborationContext context =
+        new AgentCollaborationContext(
+            2,
+            3,
+            "maximum-rigor-99999",
+            "Cross-review findings",
+            Map.of("code", codeArtifact, "art", artArtifact));
+
+    boolean executed = executor.executeConfiguredCommand(brief, "code", "PROMPT", output, 1, context);
+
+    assertTrue(executed);
+    String content = Files.readString(output);
+    assertTrue(content.contains("ROUND=2"));
+    assertTrue(content.contains("TOTAL=3"));
+    assertTrue(content.contains("ENABLED=true"));
+    assertTrue(content.contains("PROFILE=maximum-rigor-99999"));
+    assertTrue(content.contains("SHARED=Cross-review findings"));
+    assertTrue(content.contains("PEERS="));
+    assertTrue(content.contains("code=" + codeArtifact.toAbsolutePath()));
+    assertTrue(content.contains("art=" + artArtifact.toAbsolutePath()));
+  }
+
+  @Test
   void supportsCommandsThatWriteDirectlyToOutputPath() throws Exception {
     ProjectBrief brief =
         new ProjectBrief(

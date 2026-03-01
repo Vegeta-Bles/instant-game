@@ -36,8 +36,16 @@ public final class ArtAgent implements Agent {
 
   /** {@inheritDoc} */
   @Override
-  public void generate(ProjectBrief brief, Path implementDirectory, int cycle) throws IOException {
-    Path artifactPath = implementDirectory.resolve("art").resolve("cycle-%d-art-direction.md".formatted(cycle));
+  public Path artifactPath(Path implementDirectory, int cycle) {
+    return implementDirectory.resolve("art").resolve("cycle-%d-art-direction.md".formatted(cycle));
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public void generate(
+      ProjectBrief brief, Path implementDirectory, int cycle, AgentCollaborationContext context)
+      throws IOException {
+    Path artifactPath = artifactPath(implementDirectory, cycle);
 
     String prompt =
         """
@@ -50,6 +58,9 @@ public final class ArtAgent implements Agent {
         Art Styles: %s
         Major Mechanics: %s
         Minor Mechanics: %s
+        Collaboration Round: %d/%d
+        Competence Profile: %s
+        Shared Team Context: %s
         Other Notes: %s
         Cycle: %d
         
@@ -57,6 +68,7 @@ public final class ArtAgent implements Agent {
         1. Visual direction for this cycle
         2. Asset priorities and naming guidance
         3. UI readability constraints
+        4. Concrete refinements based on code/music peer feedback when round > 1
         """
             .formatted(
                 brief.projectName(),
@@ -70,10 +82,14 @@ public final class ArtAgent implements Agent {
                 String.join(
                     ", ",
                     brief.minorMechanics().isEmpty() ? List.of("None selected") : brief.minorMechanics()),
+                context.round(),
+                context.totalRounds(),
+                context.competenceProfile(),
+                context.sharedContextSummary(),
                 brief.otherNotes().isBlank() ? "None provided" : brief.otherNotes(),
                 cycle);
 
-    if (commandExecutor.executeConfiguredCommand(brief, key(), prompt, artifactPath, cycle)) {
+    if (commandExecutor.executeConfiguredCommand(brief, key(), prompt, artifactPath, cycle, context)) {
       return;
     }
 
@@ -93,12 +109,16 @@ public final class ArtAgent implements Agent {
         - Selected Styles: %s
         - Major Mechanics: %s
         - Minor Mechanics: %s
+        - Collaboration Round: %d/%d
+        - Competence Profile: %s
+        - Shared Team Context: %s
         - Other Notes: %s
         
         ## Deliverables
-        - Palette and mood board summary.
-        - Character and environment shape language.
-        - HUD sketch guidance for programmers.
+        - Palette and mood board summary with implementation constraints.
+        - Character and environment shape language aligned to mechanics.
+        - HUD sketch guidance integrated with code-level UI hooks.
+        - Refinement pass notes based on peer outputs.
         """
             .formatted(
                 cycle,
@@ -111,6 +131,10 @@ public final class ArtAgent implements Agent {
                 String.join(
                     ", ",
                     brief.minorMechanics().isEmpty() ? List.of("None selected") : brief.minorMechanics()),
+                context.round(),
+                context.totalRounds(),
+                context.competenceProfile(),
+                context.sharedContextSummary(),
                 brief.otherNotes().isBlank() ? "None provided" : brief.otherNotes());
 
     Files.createDirectories(artifactPath.getParent());

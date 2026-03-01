@@ -54,10 +54,35 @@ public final class AgentCommandExecutor {
    */
   public boolean executeConfiguredCommand(
       ProjectBrief brief, String agentKey, String prompt, Path artifactPath, int cycle) throws IOException {
+    return executeConfiguredCommand(
+        brief, agentKey, prompt, artifactPath, cycle, AgentCollaborationContext.singlePass());
+  }
+
+  /**
+   * Runs the configured command for an agent when present with collaboration metadata.
+   *
+   * @param brief parsed project brief
+   * @param agentKey stable agent key
+   * @param prompt agent prompt
+   * @param artifactPath destination file for command stdout
+   * @param cycle generation cycle number
+   * @param context collaboration metadata for this round
+   * @return true if a command was configured and executed; false otherwise
+   * @throws IOException when execution fails
+   */
+  public boolean executeConfiguredCommand(
+      ProjectBrief brief,
+      String agentKey,
+      String prompt,
+      Path artifactPath,
+      int cycle,
+      AgentCollaborationContext context)
+      throws IOException {
     Objects.requireNonNull(brief, "brief");
     Objects.requireNonNull(agentKey, "agentKey");
     Objects.requireNonNull(prompt, "prompt");
     Objects.requireNonNull(artifactPath, "artifactPath");
+    Objects.requireNonNull(context, "context");
 
     String command = brief.agentCommand(agentKey).orElse("");
     if (command.isBlank()) {
@@ -73,6 +98,12 @@ public final class AgentCommandExecutor {
     environment.put("INSTANTGAME_PROJECT_NAME", brief.projectName());
     environment.put("INSTANTGAME_CYCLE", String.valueOf(cycle));
     environment.put("INSTANTGAME_OUTPUT_PATH", artifactPath.toAbsolutePath().toString());
+    environment.put("INSTANTGAME_COLLAB_ROUND", String.valueOf(context.round()));
+    environment.put("INSTANTGAME_COLLAB_TOTAL_ROUNDS", String.valueOf(context.totalRounds()));
+    environment.put("INSTANTGAME_COLLAB_ENABLED", String.valueOf(context.collaborative()));
+    environment.put("INSTANTGAME_COMPETENCE_PROFILE", context.competenceProfile());
+    environment.put("INSTANTGAME_SHARED_CONTEXT", context.sharedContextSummary());
+    environment.put("INSTANTGAME_PEER_ARTIFACTS", toPeerArtifactString(context.peerArtifacts()));
 
     Process process = processBuilder.start();
 
@@ -120,5 +151,12 @@ public final class AgentCommandExecutor {
     throw new IOException(
         "Agent command for '%s' produced no stdout and did not write %s"
             .formatted(agentKey, artifactPath.getFileName()));
+  }
+
+  private static String toPeerArtifactString(Map<String, Path> peerArtifacts) {
+    return peerArtifacts.entrySet().stream()
+        .map(entry -> entry.getKey() + "=" + entry.getValue().toAbsolutePath())
+        .reduce((left, right) -> left + ";" + right)
+        .orElse("");
   }
 }

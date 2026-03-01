@@ -36,8 +36,16 @@ public final class CodeAgent implements Agent {
 
   /** {@inheritDoc} */
   @Override
-  public void generate(ProjectBrief brief, Path implementDirectory, int cycle) throws IOException {
-    Path artifactPath = implementDirectory.resolve("code").resolve("cycle-%d-implementation.md".formatted(cycle));
+  public Path artifactPath(Path implementDirectory, int cycle) {
+    return implementDirectory.resolve("code").resolve("cycle-%d-implementation.md".formatted(cycle));
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public void generate(
+      ProjectBrief brief, Path implementDirectory, int cycle, AgentCollaborationContext context)
+      throws IOException {
+    Path artifactPath = artifactPath(implementDirectory, cycle);
 
     String prompt =
         """
@@ -50,6 +58,9 @@ public final class CodeAgent implements Agent {
         Genres: %s
         Major Mechanics: %s
         Minor Mechanics: %s
+        Collaboration Round: %d/%d
+        Competence Profile: %s
+        Shared Team Context: %s
         Other Notes: %s
         Cycle: %d
         
@@ -57,6 +68,7 @@ public final class CodeAgent implements Agent {
         1. Core systems to implement this cycle
         2. Integration points for art and music
         3. Unit test priorities
+        4. Concrete revisions from peer feedback when round > 1
         """
             .formatted(
                 brief.projectName(),
@@ -70,10 +82,14 @@ public final class CodeAgent implements Agent {
                 String.join(
                     ", ",
                     brief.minorMechanics().isEmpty() ? List.of("None selected") : brief.minorMechanics()),
+                context.round(),
+                context.totalRounds(),
+                context.competenceProfile(),
+                context.sharedContextSummary(),
                 brief.otherNotes().isBlank() ? "None provided" : brief.otherNotes(),
                 cycle);
 
-    if (commandExecutor.executeConfiguredCommand(brief, key(), prompt, artifactPath, cycle)) {
+    if (commandExecutor.executeConfiguredCommand(brief, key(), prompt, artifactPath, cycle, context)) {
       return;
     }
 
@@ -92,13 +108,17 @@ public final class CodeAgent implements Agent {
         - Genres: %s
         - Major Mechanics: %s
         - Minor Mechanics: %s
+        - Collaboration Round: %d/%d
+        - Competence Profile: %s
+        - Shared Team Context: %s
         - Other Notes: %s
         
         ## Tasks
-        - Create core loop scaffolding.
-        - Add adapter hooks for art and music assets.
-        - Keep systems testable with unit-level seams.
-        - Emit traceable logs for each loop stage.
+        - Design production-ready architecture and concrete module seams.
+        - Integrate explicit hooks for art asset loading and music event routing.
+        - Define strict unit-test acceptance criteria for all core systems.
+        - Apply peer-review refinements from previous rounds.
+        - Emit traceable logs and deterministic outputs for CI.
         """
             .formatted(
                 cycle,
@@ -113,6 +133,10 @@ public final class CodeAgent implements Agent {
                 String.join(
                     ", ",
                     brief.minorMechanics().isEmpty() ? List.of("None selected") : brief.minorMechanics()),
+                context.round(),
+                context.totalRounds(),
+                context.competenceProfile(),
+                context.sharedContextSummary(),
                 brief.otherNotes().isBlank() ? "None provided" : brief.otherNotes());
 
     Files.createDirectories(artifactPath.getParent());

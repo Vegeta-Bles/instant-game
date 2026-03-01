@@ -58,6 +58,10 @@ class BriefParserTest {
         - Art Agent Command: <fill-me>
         - Music Agent Command: printf 'music'
 
+        ## Agent Collaboration & Competence
+        - Collaboration Rounds: 3
+        - Competence Profile: very-very-very-99999
+
         ## Gameplay Mechanics
         ### Major Mechanics (Dictate Core Gameplay Directly)
         - [x] Point and Click
@@ -107,6 +111,8 @@ class BriefParserTest {
     assertTrue(brief.mechanics().contains("Point and Click"));
     assertTrue(brief.mechanics().contains("Dialogue Choices"));
     assertTrue(brief.mechanics().contains("Time Rewind"));
+    assertEquals(3, brief.collaborationRounds());
+    assertEquals("very-very-very-99999", brief.competenceProfile());
     assertEquals("Prioritize controller support.", brief.otherNotes());
   }
 
@@ -138,6 +144,8 @@ class BriefParserTest {
     assertTrue(brief.enabledAgents().contains("code"));
     assertTrue(brief.enabledAgents().contains("art"));
     assertTrue(brief.enabledAgents().contains("music"));
+    assertEquals(2, brief.collaborationRounds());
+    assertEquals("extreme-99999", brief.competenceProfile());
   }
 
   @Test

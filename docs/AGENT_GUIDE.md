@@ -23,6 +23,8 @@ Each cycle executes this fixed sequence:
    - Create canonical scaffold paths and `map/scaffold-plan.md`.
 3. `implement`
    - Invoke each selected agent to emit cycle-specific artifacts.
+   - Run collaborative refinement for `Collaboration Rounds` iterations within each cycle.
+   - Emit `implement/collaboration/round-<n>-shared-context.md` after each round.
    - If an agent command is configured, run that command and capture stdout.
    - If no command is configured, use built-in fallback templates.
    - Agents also receive parsed genres, art styles, music styles, major mechanics, minor mechanics, and `Other Notes`.
@@ -49,6 +51,12 @@ Configured commands receive these environment variables:
 - `INSTANTGAME_PROJECT_NAME`
 - `INSTANTGAME_CYCLE`
 - `INSTANTGAME_OUTPUT_PATH`
+- `INSTANTGAME_COLLAB_ROUND`
+- `INSTANTGAME_COLLAB_TOTAL_ROUNDS`
+- `INSTANTGAME_COLLAB_ENABLED`
+- `INSTANTGAME_COMPETENCE_PROFILE`
+- `INSTANTGAME_SHARED_CONTEXT`
+- `INSTANTGAME_PEER_ARTIFACTS`
 
 Output rules:
 

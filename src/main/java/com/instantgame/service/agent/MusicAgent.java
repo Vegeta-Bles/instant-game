@@ -36,8 +36,16 @@ public final class MusicAgent implements Agent {
 
   /** {@inheritDoc} */
   @Override
-  public void generate(ProjectBrief brief, Path implementDirectory, int cycle) throws IOException {
-    Path artifactPath = implementDirectory.resolve("music").resolve("cycle-%d-music-direction.md".formatted(cycle));
+  public Path artifactPath(Path implementDirectory, int cycle) {
+    return implementDirectory.resolve("music").resolve("cycle-%d-music-direction.md".formatted(cycle));
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public void generate(
+      ProjectBrief brief, Path implementDirectory, int cycle, AgentCollaborationContext context)
+      throws IOException {
+    Path artifactPath = artifactPath(implementDirectory, cycle);
 
     String prompt =
         """
@@ -50,6 +58,9 @@ public final class MusicAgent implements Agent {
         Music Styles: %s
         Major Mechanics: %s
         Minor Mechanics: %s
+        Collaboration Round: %d/%d
+        Competence Profile: %s
+        Shared Team Context: %s
         Other Notes: %s
         Cycle: %d
         
@@ -57,6 +68,7 @@ public final class MusicAgent implements Agent {
         1. Musical direction and motifs
         2. SFX priorities aligned to gameplay events
         3. Runtime mixing notes
+        4. Concrete adjustments from code/art peer feedback when round > 1
         """
             .formatted(
                 brief.projectName(),
@@ -70,10 +82,14 @@ public final class MusicAgent implements Agent {
                 String.join(
                     ", ",
                     brief.minorMechanics().isEmpty() ? List.of("None selected") : brief.minorMechanics()),
+                context.round(),
+                context.totalRounds(),
+                context.competenceProfile(),
+                context.sharedContextSummary(),
                 brief.otherNotes().isBlank() ? "None provided" : brief.otherNotes(),
                 cycle);
 
-    if (commandExecutor.executeConfiguredCommand(brief, key(), prompt, artifactPath, cycle)) {
+    if (commandExecutor.executeConfiguredCommand(brief, key(), prompt, artifactPath, cycle, context)) {
       return;
     }
 
@@ -91,12 +107,16 @@ public final class MusicAgent implements Agent {
         - Selected Music Styles: %s
         - Major Mechanics: %s
         - Minor Mechanics: %s
+        - Collaboration Round: %d/%d
+        - Competence Profile: %s
+        - Shared Team Context: %s
         - Other Notes: %s
         
         ## Deliverables
-        - Background loop motifs.
-        - Event-driven stingers for wins/losses.
-        - Audio implementation notes for runtime mixing.
+        - Background loop motifs tied to pacing and mechanics.
+        - Event-driven stingers for wins/losses and key interactions.
+        - Audio implementation notes for runtime mixing and ducking.
+        - Refinement changes based on peer outputs.
         """
             .formatted(
                 cycle,
@@ -110,6 +130,10 @@ public final class MusicAgent implements Agent {
                 String.join(
                     ", ",
                     brief.minorMechanics().isEmpty() ? List.of("None selected") : brief.minorMechanics()),
+                context.round(),
+                context.totalRounds(),
+                context.competenceProfile(),
+                context.sharedContextSummary(),
                 brief.otherNotes().isBlank() ? "None provided" : brief.otherNotes());
 
     Files.createDirectories(artifactPath.getParent());

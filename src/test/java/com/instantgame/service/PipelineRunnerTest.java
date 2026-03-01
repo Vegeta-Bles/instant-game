@@ -50,6 +50,14 @@ class PipelineRunnerTest {
     assertTrue(Files.exists(report.outputRoot().resolve("cycle-1/implement/code/cycle-1-implementation.md")));
     assertTrue(Files.exists(report.outputRoot().resolve("cycle-1/implement/art/cycle-1-art-direction.md")));
     assertTrue(Files.exists(report.outputRoot().resolve("cycle-1/implement/music/cycle-1-music-direction.md")));
+    assertTrue(
+        Files.exists(report.outputRoot().resolve("cycle-1/implement/collaboration/round-1-shared-context.md")));
+    assertTrue(
+        Files.exists(report.outputRoot().resolve("cycle-1/implement/collaboration/round-2-shared-context.md")));
+    String roundTwoSummary =
+        Files.readString(report.outputRoot().resolve("cycle-1/implement/collaboration/round-2-shared-context.md"));
+    assertTrue(roundTwoSummary.contains("Collaboration Summary - Round 2"));
+    assertTrue(roundTwoSummary.contains("Competence Profile: extreme-99999"));
     assertTrue(Files.exists(report.outputRoot().resolve("cycle-1/test/test-report.md")));
     assertEquals(8, report.executedStages().size());
     assertTrue(output.toString().contains("Cycle 1/2"));

@@ -15,12 +15,35 @@ public interface Agent {
   String key();
 
   /**
-   * Generates artifacts for one iteration.
+   * Resolves the canonical artifact path for this agent in a cycle.
+   *
+   * @param implementDirectory base implement directory
+   * @param cycle cycle number (1-based)
+   * @return expected artifact path
+   */
+  Path artifactPath(Path implementDirectory, int cycle);
+
+  /**
+   * Generates artifacts for one iteration with collaboration context.
+   *
+   * @param brief parsed project brief
+   * @param implementDirectory base directory for implementation outputs
+   * @param cycle cycle number, starting at 1
+   * @param context collaboration metadata for this round
+   * @throws IOException when writing artifacts fails
+   */
+  void generate(ProjectBrief brief, Path implementDirectory, int cycle, AgentCollaborationContext context)
+      throws IOException;
+
+  /**
+   * Generates artifacts for one iteration without collaborative refinement.
    *
    * @param brief parsed project brief
    * @param implementDirectory base directory for implementation outputs
    * @param cycle cycle number, starting at 1
    * @throws IOException when writing artifacts fails
    */
-  void generate(ProjectBrief brief, Path implementDirectory, int cycle) throws IOException;
+  default void generate(ProjectBrief brief, Path implementDirectory, int cycle) throws IOException {
+    generate(brief, implementDirectory, cycle, AgentCollaborationContext.singlePass());
+  }
 }

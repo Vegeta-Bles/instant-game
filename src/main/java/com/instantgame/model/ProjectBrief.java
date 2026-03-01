@@ -15,6 +15,9 @@ import java.util.stream.Collectors;
  */
 public final class ProjectBrief {
 
+  private static final int DEFAULT_COLLABORATION_ROUNDS = 2;
+  private static final String DEFAULT_COMPETENCE_PROFILE = "extreme-99999";
+
   private final String projectName;
   private final String oneLinePitch;
   private final String coreLoop;
@@ -28,6 +31,8 @@ public final class ProjectBrief {
   private final Map<String, String> agentCommands;
   private final int iterations;
   private final String otherNotes;
+  private final int collaborationRounds;
+  private final String competenceProfile;
 
   /**
    * Creates a validated immutable project brief.
@@ -45,6 +50,8 @@ public final class ProjectBrief {
    * @param agentCommands configured command lines keyed by agent (for example code/art/music)
    * @param iterations number of generation cycles
    * @param otherNotes optional notes for additional implementation context
+   * @param collaborationRounds collaboration refinement rounds per cycle
+   * @param competenceProfile quality profile used to set rigor/depth
    */
   public ProjectBrief(
       String projectName,
@@ -59,7 +66,9 @@ public final class ProjectBrief {
       Set<String> enabledAgents,
       Map<String, String> agentCommands,
       int iterations,
-      String otherNotes) {
+      String otherNotes,
+      int collaborationRounds,
+      String competenceProfile) {
     this.projectName = Objects.requireNonNull(projectName, "projectName").trim();
     this.oneLinePitch = Objects.requireNonNull(oneLinePitch, "oneLinePitch").trim();
     this.coreLoop = Objects.requireNonNull(coreLoop, "coreLoop").trim();
@@ -80,6 +89,8 @@ public final class ProjectBrief {
                         entry -> entry.getValue().trim())));
     this.iterations = iterations;
     this.otherNotes = Objects.requireNonNull(otherNotes, "otherNotes").trim();
+    this.collaborationRounds = collaborationRounds;
+    this.competenceProfile = Objects.requireNonNull(competenceProfile, "competenceProfile").trim();
 
     if (this.projectName.isEmpty()) {
       throw new IllegalArgumentException("Project Name cannot be empty.");
@@ -96,23 +107,51 @@ public final class ProjectBrief {
     if (iterations < 1) {
       throw new IllegalArgumentException("Iterations must be at least 1.");
     }
+    if (collaborationRounds < 1) {
+      throw new IllegalArgumentException("Collaboration Rounds must be at least 1.");
+    }
+    if (this.competenceProfile.isBlank()) {
+      throw new IllegalArgumentException("Competence Profile cannot be blank.");
+    }
   }
 
   /**
-   * Creates a validated immutable project brief with default empty {@code otherNotes}.
-   *
-   * @param projectName game name from PRD
-   * @param oneLinePitch one-line summary
-   * @param coreLoop player loop description
-   * @param targetPlatforms target platform description
-   * @param genres selected genres
-   * @param artStyles selected art directions
-   * @param musicStyles selected music directions
-   * @param majorMechanics selected major mechanics
-   * @param minorMechanics selected minor mechanics
-   * @param enabledAgents selected agents
-   * @param agentCommands configured command lines keyed by agent (for example code/art/music)
-   * @param iterations number of generation cycles
+   * Creates a validated immutable project brief with default collaboration settings.
+   */
+  public ProjectBrief(
+      String projectName,
+      String oneLinePitch,
+      String coreLoop,
+      String targetPlatforms,
+      List<String> genres,
+      List<String> artStyles,
+      List<String> musicStyles,
+      List<String> majorMechanics,
+      List<String> minorMechanics,
+      Set<String> enabledAgents,
+      Map<String, String> agentCommands,
+      int iterations,
+      String otherNotes) {
+    this(
+        projectName,
+        oneLinePitch,
+        coreLoop,
+        targetPlatforms,
+        genres,
+        artStyles,
+        musicStyles,
+        majorMechanics,
+        minorMechanics,
+        enabledAgents,
+        agentCommands,
+        iterations,
+        otherNotes,
+        DEFAULT_COLLABORATION_ROUNDS,
+        DEFAULT_COMPETENCE_PROFILE);
+  }
+
+  /**
+   * Creates a validated immutable project brief with default notes and collaboration settings.
    */
   public ProjectBrief(
       String projectName,
@@ -144,18 +183,38 @@ public final class ProjectBrief {
   }
 
   /**
-   * Creates a validated immutable project brief with no mechanics and default empty {@code otherNotes}.
-   *
-   * @param projectName game name from PRD
-   * @param oneLinePitch one-line summary
-   * @param coreLoop player loop description
-   * @param targetPlatforms target platform description
-   * @param genres selected genres
-   * @param artStyles selected art directions
-   * @param musicStyles selected music directions
-   * @param enabledAgents selected agents
-   * @param agentCommands configured command lines keyed by agent (for example code/art/music)
-   * @param iterations number of generation cycles
+   * Creates a validated immutable project brief with mechanics stored as major mechanics.
+   */
+  public ProjectBrief(
+      String projectName,
+      String oneLinePitch,
+      String coreLoop,
+      String targetPlatforms,
+      List<String> genres,
+      List<String> artStyles,
+      List<String> musicStyles,
+      List<String> mechanics,
+      Set<String> enabledAgents,
+      Map<String, String> agentCommands,
+      int iterations) {
+    this(
+        projectName,
+        oneLinePitch,
+        coreLoop,
+        targetPlatforms,
+        genres,
+        artStyles,
+        musicStyles,
+        mechanics,
+        List.of(),
+        enabledAgents,
+        agentCommands,
+        iterations,
+        "");
+  }
+
+  /**
+   * Creates a validated immutable project brief with no mechanics and default notes.
    */
   public ProjectBrief(
       String projectName,
@@ -185,19 +244,7 @@ public final class ProjectBrief {
   }
 
   /**
-   * Creates a validated immutable project brief with mechanics stored as major mechanics.
-   *
-   * @param projectName game name from PRD
-   * @param oneLinePitch one-line summary
-   * @param coreLoop player loop description
-   * @param targetPlatforms target platform description
-   * @param genres selected genres
-   * @param artStyles selected art directions
-   * @param musicStyles selected music directions
-   * @param mechanics selected gameplay mechanics
-   * @param enabledAgents selected agents
-   * @param agentCommands configured command lines keyed by agent (for example code/art/music)
-   * @param iterations number of generation cycles
+   * Creates a validated immutable project brief with no external commands, styles, mechanics, or notes.
    */
   public ProjectBrief(
       String projectName,
@@ -206,10 +253,7 @@ public final class ProjectBrief {
       String targetPlatforms,
       List<String> genres,
       List<String> artStyles,
-      List<String> musicStyles,
-      List<String> mechanics,
       Set<String> enabledAgents,
-      Map<String, String> agentCommands,
       int iterations) {
     this(
         projectName,
@@ -218,11 +262,11 @@ public final class ProjectBrief {
         targetPlatforms,
         genres,
         artStyles,
-        musicStyles,
-        mechanics,
+        List.of(),
+        List.of(),
         List.of(),
         enabledAgents,
-        agentCommands,
+        Map.of(),
         iterations,
         "");
   }
@@ -274,7 +318,8 @@ public final class ProjectBrief {
 
   /** @return selected gameplay mechanics, major first then minor */
   public List<String> mechanics() {
-    java.util.ArrayList<String> combined = new java.util.ArrayList<>(majorMechanics.size() + minorMechanics.size());
+    java.util.ArrayList<String> combined =
+        new java.util.ArrayList<>(majorMechanics.size() + minorMechanics.size());
     combined.addAll(majorMechanics);
     combined.addAll(minorMechanics);
     return List.copyOf(combined);
@@ -312,6 +357,16 @@ public final class ProjectBrief {
     return otherNotes;
   }
 
+  /** @return collaboration rounds per cycle */
+  public int collaborationRounds() {
+    return collaborationRounds;
+  }
+
+  /** @return competence profile string */
+  public String competenceProfile() {
+    return competenceProfile;
+  }
+
   /**
    * Checks if the brief enables a specific agent.
    *
@@ -332,42 +387,5 @@ public final class ProjectBrief {
     String sanitized = projectName.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]+", "-");
     sanitized = sanitized.replaceAll("^-+", "").replaceAll("-+$", "");
     return sanitized.isEmpty() ? "project" : sanitized;
-  }
-
-  /**
-   * Creates a validated immutable project brief with no external commands, music styles, or notes.
-   *
-   * @param projectName game name from PRD
-   * @param oneLinePitch one-line summary
-   * @param coreLoop player loop description
-   * @param targetPlatforms target platform description
-   * @param genres selected genres
-   * @param artStyles selected art directions
-   * @param enabledAgents selected agents
-   * @param iterations number of generation cycles
-   */
-  public ProjectBrief(
-      String projectName,
-      String oneLinePitch,
-      String coreLoop,
-      String targetPlatforms,
-      List<String> genres,
-      List<String> artStyles,
-      Set<String> enabledAgents,
-      int iterations) {
-    this(
-        projectName,
-        oneLinePitch,
-        coreLoop,
-        targetPlatforms,
-        genres,
-        artStyles,
-        List.of(),
-        List.of(),
-        List.of(),
-        enabledAgents,
-        Map.of(),
-        iterations,
-        "");
   }
 }

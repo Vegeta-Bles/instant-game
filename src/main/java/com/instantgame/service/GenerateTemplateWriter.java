@@ -149,6 +149,11 @@ public final class GenerateTemplateWriter {
       - Music Agent Command: <fill-me>
       - Command Contract: each command receives INSTANTGAME_PROMPT and should print markdown to stdout.
       
+      ## Agent Collaboration & Competence
+      - Collaboration Rounds: 2
+      - Competence Profile: extreme-99999
+      - Collaboration Directive: each round must critique peer outputs and produce concrete improvements.
+      
       ## Gameplay Mechanics
       ### Major Mechanics (Dictate Core Gameplay Directly)
       - [ ] Point and Click

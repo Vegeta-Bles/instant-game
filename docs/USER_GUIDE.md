@@ -16,10 +16,11 @@ Use `instantgame` to convert a filled PRD (`GENERATE.md`) into iterative generat
 2. Open `instantgame/GENERATE.md` and fill all required fields.
 3. Select genres, art styles, music styles, and gameplay mechanics split into major and minor sections, and fill custom lines when needed.
 4. Optionally configure `Code/Art/Music Agent Command` values to run external AI tools.
-5. Fill detailed planning sections (vision, systems, scope, constraints, and `Other Notes`).
-6. Set iteration count.
-7. Run `bin/instantgame generate`.
-8. Review outputs under `instantgame/generated/<project-slug>/cycle-*`.
+5. Set `Collaboration Rounds` and `Competence Profile` under the agent collaboration section.
+6. Fill detailed planning sections (vision, systems, scope, constraints, and `Other Notes`).
+7. Set iteration count.
+8. Run `bin/instantgame generate`.
+9. Review outputs under `instantgame/generated/<project-slug>/cycle-*`.
 
 ## Required Fields
 
@@ -34,13 +35,14 @@ Use `instantgame` to convert a filled PRD (`GENERATE.md`) into iterative generat
 - `read/brief-snapshot.md`: Snapshot of parsed requirements.
 - `map/scaffold-plan.md`: Generated project scaffold plan.
 - `implement/*`: Agent artifacts (code, art, music).
+- `implement/collaboration/round-<n>-shared-context.md`: Cross-agent synthesis and refinement context for each collaboration round.
 - `test/test-report.md`: Stage checks and pass/fail result.
 
 ## External AI Command Contract
 
 When an agent command is configured in `GENERATE.md`:
 
-- The process receives `INSTANTGAME_PROMPT` and related context env vars.
+- The process receives `INSTANTGAME_PROMPT` and related context env vars, including collaboration metadata (`INSTANTGAME_COLLAB_ROUND`, `INSTANTGAME_COLLAB_TOTAL_ROUNDS`, `INSTANTGAME_COMPETENCE_PROFILE`, and `INSTANTGAME_SHARED_CONTEXT`).
 - Stdout is captured into the agent artifact file.
 - If stdout is empty, the process must write its result to `INSTANTGAME_OUTPUT_PATH`.
 - Non-zero exit codes fail generation immediately.
