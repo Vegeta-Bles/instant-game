@@ -48,7 +48,8 @@ public final class MusicAgent implements Agent {
         Core Loop: %s
         Platforms: %s
         Music Styles: %s
-        Mechanics: %s
+        Major Mechanics: %s
+        Minor Mechanics: %s
         Other Notes: %s
         Cycle: %d
         
@@ -63,7 +64,12 @@ public final class MusicAgent implements Agent {
                 brief.coreLoop(),
                 brief.targetPlatforms(),
                 String.join(", ", brief.musicStyles().isEmpty() ? List.of("None selected") : brief.musicStyles()),
-                String.join(", ", brief.mechanics().isEmpty() ? List.of("None selected") : brief.mechanics()),
+                String.join(
+                    ", ",
+                    brief.majorMechanics().isEmpty() ? List.of("None selected") : brief.majorMechanics()),
+                String.join(
+                    ", ",
+                    brief.minorMechanics().isEmpty() ? List.of("None selected") : brief.minorMechanics()),
                 brief.otherNotes().isBlank() ? "None provided" : brief.otherNotes(),
                 cycle);
 
@@ -83,7 +89,8 @@ public final class MusicAgent implements Agent {
         - Core Loop Tempo: %s
         - Platforms: %s
         - Selected Music Styles: %s
-        - Mechanics: %s
+        - Major Mechanics: %s
+        - Minor Mechanics: %s
         - Other Notes: %s
         
         ## Deliverables
@@ -97,7 +104,12 @@ public final class MusicAgent implements Agent {
                 brief.coreLoop(),
                 brief.targetPlatforms(),
                 String.join(", ", brief.musicStyles().isEmpty() ? List.of("None selected") : brief.musicStyles()),
-                String.join(", ", brief.mechanics().isEmpty() ? List.of("None selected") : brief.mechanics()),
+                String.join(
+                    ", ",
+                    brief.majorMechanics().isEmpty() ? List.of("None selected") : brief.majorMechanics()),
+                String.join(
+                    ", ",
+                    brief.minorMechanics().isEmpty() ? List.of("None selected") : brief.minorMechanics()),
                 brief.otherNotes().isBlank() ? "None provided" : brief.otherNotes());
 
     Files.createDirectories(artifactPath.getParent());

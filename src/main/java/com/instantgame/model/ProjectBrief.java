@@ -22,7 +22,8 @@ public final class ProjectBrief {
   private final List<String> genres;
   private final List<String> artStyles;
   private final List<String> musicStyles;
-  private final List<String> mechanics;
+  private final List<String> majorMechanics;
+  private final List<String> minorMechanics;
   private final Set<String> enabledAgents;
   private final Map<String, String> agentCommands;
   private final int iterations;
@@ -38,7 +39,8 @@ public final class ProjectBrief {
    * @param genres selected genres
    * @param artStyles selected art directions
    * @param musicStyles selected music directions
-   * @param mechanics selected gameplay mechanics
+   * @param majorMechanics selected major mechanics
+   * @param minorMechanics selected minor mechanics
    * @param enabledAgents selected agents
    * @param agentCommands configured command lines keyed by agent (for example code/art/music)
    * @param iterations number of generation cycles
@@ -52,7 +54,8 @@ public final class ProjectBrief {
       List<String> genres,
       List<String> artStyles,
       List<String> musicStyles,
-      List<String> mechanics,
+      List<String> majorMechanics,
+      List<String> minorMechanics,
       Set<String> enabledAgents,
       Map<String, String> agentCommands,
       int iterations,
@@ -64,7 +67,8 @@ public final class ProjectBrief {
     this.genres = List.copyOf(Objects.requireNonNull(genres, "genres"));
     this.artStyles = List.copyOf(Objects.requireNonNull(artStyles, "artStyles"));
     this.musicStyles = List.copyOf(Objects.requireNonNull(musicStyles, "musicStyles"));
-    this.mechanics = List.copyOf(Objects.requireNonNull(mechanics, "mechanics"));
+    this.majorMechanics = List.copyOf(Objects.requireNonNull(majorMechanics, "majorMechanics"));
+    this.minorMechanics = List.copyOf(Objects.requireNonNull(minorMechanics, "minorMechanics"));
     this.enabledAgents =
         Collections.unmodifiableSet(new LinkedHashSet<>(Objects.requireNonNull(enabledAgents, "enabledAgents")));
     this.agentCommands =
@@ -104,6 +108,51 @@ public final class ProjectBrief {
    * @param genres selected genres
    * @param artStyles selected art directions
    * @param musicStyles selected music directions
+   * @param majorMechanics selected major mechanics
+   * @param minorMechanics selected minor mechanics
+   * @param enabledAgents selected agents
+   * @param agentCommands configured command lines keyed by agent (for example code/art/music)
+   * @param iterations number of generation cycles
+   */
+  public ProjectBrief(
+      String projectName,
+      String oneLinePitch,
+      String coreLoop,
+      String targetPlatforms,
+      List<String> genres,
+      List<String> artStyles,
+      List<String> musicStyles,
+      List<String> majorMechanics,
+      List<String> minorMechanics,
+      Set<String> enabledAgents,
+      Map<String, String> agentCommands,
+      int iterations) {
+    this(
+        projectName,
+        oneLinePitch,
+        coreLoop,
+        targetPlatforms,
+        genres,
+        artStyles,
+        musicStyles,
+        majorMechanics,
+        minorMechanics,
+        enabledAgents,
+        agentCommands,
+        iterations,
+        "");
+  }
+
+  /**
+   * Creates a validated immutable project brief with no mechanics and default empty {@code otherNotes}.
+   *
+   * @param projectName game name from PRD
+   * @param oneLinePitch one-line summary
+   * @param coreLoop player loop description
+   * @param targetPlatforms target platform description
+   * @param genres selected genres
+   * @param artStyles selected art directions
+   * @param musicStyles selected music directions
    * @param enabledAgents selected agents
    * @param agentCommands configured command lines keyed by agent (for example code/art/music)
    * @param iterations number of generation cycles
@@ -128,6 +177,7 @@ public final class ProjectBrief {
         artStyles,
         musicStyles,
         List.of(),
+        List.of(),
         enabledAgents,
         agentCommands,
         iterations,
@@ -135,7 +185,7 @@ public final class ProjectBrief {
   }
 
   /**
-   * Creates a validated immutable project brief with default empty {@code otherNotes}.
+   * Creates a validated immutable project brief with mechanics stored as major mechanics.
    *
    * @param projectName game name from PRD
    * @param oneLinePitch one-line summary
@@ -170,6 +220,7 @@ public final class ProjectBrief {
         artStyles,
         musicStyles,
         mechanics,
+        List.of(),
         enabledAgents,
         agentCommands,
         iterations,
@@ -211,9 +262,22 @@ public final class ProjectBrief {
     return musicStyles;
   }
 
-  /** @return selected gameplay mechanics */
+  /** @return selected major mechanics */
+  public List<String> majorMechanics() {
+    return majorMechanics;
+  }
+
+  /** @return selected minor mechanics */
+  public List<String> minorMechanics() {
+    return minorMechanics;
+  }
+
+  /** @return selected gameplay mechanics, major first then minor */
   public List<String> mechanics() {
-    return mechanics;
+    java.util.ArrayList<String> combined = new java.util.ArrayList<>(majorMechanics.size() + minorMechanics.size());
+    combined.addAll(majorMechanics);
+    combined.addAll(minorMechanics);
+    return List.copyOf(combined);
   }
 
   /** @return selected agent names */
@@ -298,6 +362,7 @@ public final class ProjectBrief {
         targetPlatforms,
         genres,
         artStyles,
+        List.of(),
         List.of(),
         List.of(),
         enabledAgents,

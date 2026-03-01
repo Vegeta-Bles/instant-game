@@ -58,11 +58,17 @@ class BriefParserTest {
         - Art Agent Command: <fill-me>
         - Music Agent Command: printf 'music'
 
-        ## Gameplay Mechanics Checkboxes
+        ## Gameplay Mechanics
+        ### Major Mechanics (Dictate Core Gameplay Directly)
         - [x] Point and Click
         - [x] Dialogue Choices
         - [ ] Turn-Based Combat
-        - Custom Mechanic: Time Rewind
+        - Custom Major Mechanic: Time Rewind
+
+        ### Minor Mechanics (Subset / Supporting Systems)
+        - [x] Quick Time Events
+        - [ ] Combo Meter
+        - Custom Minor Mechanic: Context Clues
 
         ## Loop Settings
         - Iterations: 3
@@ -90,7 +96,14 @@ class BriefParserTest {
     assertEquals("printf 'code'", brief.agentCommand("code").orElseThrow());
     assertTrue(brief.agentCommand("art").isEmpty());
     assertEquals("printf 'music'", brief.agentCommand("music").orElseThrow());
-    assertEquals(3, brief.mechanics().size());
+    assertEquals(3, brief.majorMechanics().size());
+    assertTrue(brief.majorMechanics().contains("Point and Click"));
+    assertTrue(brief.majorMechanics().contains("Dialogue Choices"));
+    assertTrue(brief.majorMechanics().contains("Time Rewind"));
+    assertEquals(2, brief.minorMechanics().size());
+    assertTrue(brief.minorMechanics().contains("Quick Time Events"));
+    assertTrue(brief.minorMechanics().contains("Context Clues"));
+    assertEquals(5, brief.mechanics().size());
     assertTrue(brief.mechanics().contains("Point and Click"));
     assertTrue(brief.mechanics().contains("Dialogue Choices"));
     assertTrue(brief.mechanics().contains("Time Rewind"));

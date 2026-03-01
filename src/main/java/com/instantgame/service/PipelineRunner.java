@@ -108,7 +108,8 @@ public final class PipelineRunner {
         - Genres: %s
         - Art Styles: %s
         - Music Styles: %s
-        - Mechanics: %s
+        - Major Mechanics: %s
+        - Minor Mechanics: %s
         - Other Notes: %s
         - External Agent Commands: %s
         """
@@ -123,7 +124,10 @@ public final class PipelineRunner {
                     ", ", brief.artStyles().isEmpty() ? List.of("None selected") : brief.artStyles()),
                 String.join(
                     ", ", brief.musicStyles().isEmpty() ? List.of("None selected") : brief.musicStyles()),
-                String.join(", ", brief.mechanics().isEmpty() ? List.of("None selected") : brief.mechanics()),
+                String.join(
+                    ", ", brief.majorMechanics().isEmpty() ? List.of("None selected") : brief.majorMechanics()),
+                String.join(
+                    ", ", brief.minorMechanics().isEmpty() ? List.of("None selected") : brief.minorMechanics()),
                 brief.otherNotes().isBlank() ? "None provided" : brief.otherNotes(),
                 brief.agentCommands().isEmpty()
                     ? "None configured"

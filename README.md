@@ -63,5 +63,5 @@ Command behavior:
 
 - Agent toggles in `GENERATE.md` currently support Code, Art, and Music.
 - The PRD template includes extensive genre, art style, and music style checklists with custom fill-in fields.
-- The PRD template also includes a gameplay mechanics checklist (for example `Point and Click`) plus `Custom Mechanic`.
+- The PRD template includes split gameplay mechanics sections: major mechanics (core) and minor mechanics (supporting subsets), including `Point and Click`.
 - Unit tests validate command behavior, parsing, stage outputs, and command-backed AI execution.

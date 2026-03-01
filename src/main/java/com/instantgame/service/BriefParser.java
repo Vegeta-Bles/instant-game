@@ -45,17 +45,25 @@ public final class BriefParser {
     List<String> genres = new ArrayList<>();
     List<String> artStyles = new ArrayList<>();
     List<String> musicStyles = new ArrayList<>();
-    List<String> mechanics = new ArrayList<>();
+    List<String> majorMechanics = new ArrayList<>();
+    List<String> minorMechanics = new ArrayList<>();
     Set<String> enabledAgents = new LinkedHashSet<>();
     Map<String, String> agentCommands = new LinkedHashMap<>();
 
     String currentSection = "";
+    String currentSubSection = "";
 
     for (String rawLine : lines) {
       String line = rawLine.trim();
 
       if (line.startsWith("## ")) {
         currentSection = line.substring(3).trim().toLowerCase(Locale.ROOT);
+        currentSubSection = "";
+        continue;
+      }
+
+      if (line.startsWith("### ")) {
+        currentSubSection = line.substring(4).trim().toLowerCase(Locale.ROOT);
         continue;
       }
 
@@ -100,10 +108,22 @@ public final class BriefParser {
             musicStyles.add(customMusicStyle);
           }
         } else if (currentSection.contains("mechanic")
+            && key.toLowerCase(Locale.ROOT).startsWith("custom major mechanic")) {
+          String customMechanic = normalizeValue(value);
+          if (!customMechanic.isBlank()) {
+            majorMechanics.add(customMechanic);
+          }
+        } else if (currentSection.contains("mechanic")
+            && key.toLowerCase(Locale.ROOT).startsWith("custom minor mechanic")) {
+          String customMechanic = normalizeValue(value);
+          if (!customMechanic.isBlank()) {
+            minorMechanics.add(customMechanic);
+          }
+        } else if (currentSection.contains("mechanic")
             && key.toLowerCase(Locale.ROOT).startsWith("custom mechanic")) {
           String customMechanic = normalizeValue(value);
           if (!customMechanic.isBlank()) {
-            mechanics.add(customMechanic);
+            majorMechanics.add(customMechanic);
           }
         }
       }
@@ -124,7 +144,11 @@ public final class BriefParser {
         } else if (currentSection.contains("music style")) {
           musicStyles.add(label);
         } else if (currentSection.contains("mechanic")) {
-          mechanics.add(label);
+          if (currentSubSection.contains("minor")) {
+            minorMechanics.add(label);
+          } else {
+            majorMechanics.add(label);
+          }
         } else if (currentSection.contains("agent")) {
           enabledAgents.add(normalizeAgentLabel(label));
         }
@@ -145,7 +169,8 @@ public final class BriefParser {
         genres,
         artStyles,
         musicStyles,
-        mechanics,
+        majorMechanics,
+        minorMechanics,
         enabledAgents,
         agentCommands,
         iterations,

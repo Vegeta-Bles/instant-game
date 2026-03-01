@@ -149,38 +149,52 @@ public final class GenerateTemplateWriter {
       - Music Agent Command: <fill-me>
       - Command Contract: each command receives INSTANTGAME_PROMPT and should print markdown to stdout.
       
-      ## Gameplay Mechanics Checkboxes
+      ## Gameplay Mechanics
+      ### Major Mechanics (Dictate Core Gameplay Directly)
       - [ ] Point and Click
-      - [ ] Dialogue Choices
-      - [ ] Branching Narrative
-      - [ ] Inventory Management
-      - [ ] Item Crafting
-      - [ ] Base Building
-      - [ ] Resource Gathering
-      - [ ] Resource Management
-      - [ ] Stealth
-      - [ ] Parkour / Movement Tech
-      - [ ] Platforming
-      - [ ] Physics Puzzles
-      - [ ] Logic Puzzles
-      - [ ] Match-3
       - [ ] Turn-Based Combat
       - [ ] Real-Time Combat
       - [ ] Deckbuilding Combat
       - [ ] Auto-Battling
-      - [ ] Bullet Hell Patterns
+      - [ ] Exploration / Discovery
+      - [ ] Platforming
+      - [ ] Puzzle Solving
+      - [ ] Dialogue Choices
+      - [ ] Branching Narrative
+      - [ ] Resource Gathering
+      - [ ] Resource Management
+      - [ ] Base Building
+      - [ ] Item Crafting
+      - [ ] Stealth
+      - [ ] Co-op Multiplayer
+      - [ ] Competitive PvP
       - [ ] Rhythm / Timing
+      - [ ] World Simulation / AI Ecology
       - [ ] Procedural Generation
       - [ ] Permadeath
       - [ ] Meta Progression
-      - [ ] Companion / Party Management
-      - [ ] Exploration / Discovery
-      - [ ] Co-op Multiplayer
-      - [ ] Competitive PvP
+      - Custom Major Mechanic: <fill-me>
+      
+      ### Minor Mechanics (Subset / Supporting Systems)
       - [ ] Quick Time Events
       - [ ] Dialogue Reputation System
-      - [ ] World Simulation / AI Ecology
-      - Custom Mechanic: <fill-me>
+      - [ ] Companion / Party Management
+      - [ ] Parkour / Movement Tech
+      - [ ] Physics Puzzles
+      - [ ] Logic Puzzles
+      - [ ] Match-3
+      - [ ] Bullet Hell Patterns
+      - [ ] Dodge / Parry Timing
+      - [ ] Combo Meter
+      - [ ] Status Effects
+      - [ ] Loadout Management
+      - [ ] Skill Tree Nodes
+      - [ ] Minimap / Wayfinding
+      - [ ] Ping / Marker System
+      - [ ] Crafting Recipes
+      - [ ] Trading / Barter
+      - [ ] Base Upgrades
+      - Custom Minor Mechanic: <fill-me>
       
       ## Core Mechanics & Systems
       - Primary Mechanics: <fill-me>
