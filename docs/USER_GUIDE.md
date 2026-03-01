@@ -17,7 +17,7 @@ Use `instantgame` to convert a filled PRD (`GENERATE.md`) into iterative generat
 3. Select genres, art styles, music styles, and gameplay mechanics split into major and minor sections, and fill custom lines when needed.
 4. Optionally configure `Code/Art/Music Agent Command` values to run external AI tools.
 5. Set `Collaboration Rounds` and `Competence Profile` under the agent collaboration section.
-6. Fill detailed planning sections (vision, systems, scope, constraints, and `Other Notes`).
+6. Fill detailed planning sections (vision, systems, scope, rough timeline events, constraints, and `Other Notes`).
 7. Set iteration count.
 8. Run `bin/instantgame generate`.
 9. Review outputs under `instantgame/generated/<project-slug>/cycle-*`.

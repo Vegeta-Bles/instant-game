@@ -26,7 +26,10 @@ class GenerateTemplateWriterTest {
 
     assertTrue(created);
     assertTrue(Files.exists(briefPath));
-    assertEquals(GenerateTemplateWriter.TEMPLATE, Files.readString(briefPath));
+    String content = Files.readString(briefPath);
+    assertEquals(GenerateTemplateWriter.TEMPLATE, content);
+    assertTrue(content.contains("## Rough Timeline"));
+    assertTrue(content.contains("- Timeline: <start> - - - - - - - - - - - - - <end>"));
   }
 
   @Test

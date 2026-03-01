@@ -86,4 +86,5 @@ During each cycle, agents run multiple refinement rounds and exchange shared con
 - Agent toggles in `GENERATE.md` currently support Code, Art, and Music.
 - The PRD template includes extensive genre, art style, and music style checklists with custom fill-in fields.
 - The PRD template includes split gameplay mechanics sections: major mechanics (core) and minor mechanics (supporting subsets), including `Point and Click`.
+- The PRD template includes a rough timeline track: `<start> - - - - - - - - - - - - - <end>` with editable timeline event lines.
 - Unit tests validate command behavior, parsing, stage outputs, and command-backed AI execution.

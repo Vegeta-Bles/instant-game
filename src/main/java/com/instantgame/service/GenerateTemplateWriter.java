@@ -218,6 +218,14 @@ public final class GenerateTemplateWriter {
       - Number of Items / Abilities: <fill-me>
       - Expected Time to MVP: <fill-me>
       - Out of Scope (Explicit): <fill-me>
+
+      ## Rough Timeline
+      - Timeline: <start> - - - - - - - - - - - - - <end>
+      - Event 1 (@Milestone): <fill-me>
+      - Event 2 (@Milestone): <fill-me>
+      - Event 3 (@Milestone): <fill-me>
+      - Event 4 (@Milestone): <fill-me>
+      - Custom Timeline Event: <fill-me>
       
       ## Tech & Production Constraints
       - Engine / Framework: <fill-me>
