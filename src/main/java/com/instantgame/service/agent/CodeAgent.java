@@ -48,6 +48,7 @@ public final class CodeAgent implements Agent {
         Core Loop: %s
         Platforms: %s
         Genres: %s
+        Mechanics: %s
         Other Notes: %s
         Cycle: %d
         
@@ -62,6 +63,7 @@ public final class CodeAgent implements Agent {
                 brief.coreLoop(),
                 brief.targetPlatforms(),
                 String.join(", ", brief.genres().isEmpty() ? List.of("None selected") : brief.genres()),
+                String.join(", ", brief.mechanics().isEmpty() ? List.of("None selected") : brief.mechanics()),
                 brief.otherNotes().isBlank() ? "None provided" : brief.otherNotes(),
                 cycle);
 
@@ -82,6 +84,7 @@ public final class CodeAgent implements Agent {
         - Core Loop: %s
         - Platforms: %s
         - Genres: %s
+        - Mechanics: %s
         - Other Notes: %s
         
         ## Tasks
@@ -97,6 +100,7 @@ public final class CodeAgent implements Agent {
                 brief.coreLoop(),
                 brief.targetPlatforms(),
                 String.join(", ", brief.genres().isEmpty() ? List.of("None selected") : brief.genres()),
+                String.join(", ", brief.mechanics().isEmpty() ? List.of("None selected") : brief.mechanics()),
                 brief.otherNotes().isBlank() ? "None provided" : brief.otherNotes());
 
     Files.createDirectories(artifactPath.getParent());

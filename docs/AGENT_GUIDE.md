@@ -25,7 +25,7 @@ Each cycle executes this fixed sequence:
    - Invoke each selected agent to emit cycle-specific artifacts.
    - If an agent command is configured, run that command and capture stdout.
    - If no command is configured, use built-in fallback templates.
-   - Agents also receive parsed genres, art styles, music styles, and `Other Notes`.
+   - Agents also receive parsed genres, art styles, music styles, mechanics, and `Other Notes`.
 4. `test`
    - Verify expected outputs exist.
    - Write `test/test-report.md` with PASS/FAIL.

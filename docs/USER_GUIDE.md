@@ -14,7 +14,7 @@ Use `instantgame` to convert a filled PRD (`GENERATE.md`) into iterative generat
 
 1. Run `bin/instantgame` in your working directory.
 2. Open `instantgame/GENERATE.md` and fill all required fields.
-3. Select genres, art styles, and music styles, and fill custom style lines when needed.
+3. Select genres, art styles, music styles, and gameplay mechanics, and fill custom lines when needed.
 4. Optionally configure `Code/Art/Music Agent Command` values to run external AI tools.
 5. Fill detailed planning sections (vision, systems, scope, constraints, and `Other Notes`).
 6. Set iteration count.

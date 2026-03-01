@@ -58,6 +58,12 @@ class BriefParserTest {
         - Art Agent Command: <fill-me>
         - Music Agent Command: printf 'music'
 
+        ## Gameplay Mechanics Checkboxes
+        - [x] Point and Click
+        - [x] Dialogue Choices
+        - [ ] Turn-Based Combat
+        - Custom Mechanic: Time Rewind
+
         ## Loop Settings
         - Iterations: 3
 
@@ -84,6 +90,10 @@ class BriefParserTest {
     assertEquals("printf 'code'", brief.agentCommand("code").orElseThrow());
     assertTrue(brief.agentCommand("art").isEmpty());
     assertEquals("printf 'music'", brief.agentCommand("music").orElseThrow());
+    assertEquals(3, brief.mechanics().size());
+    assertTrue(brief.mechanics().contains("Point and Click"));
+    assertTrue(brief.mechanics().contains("Dialogue Choices"));
+    assertTrue(brief.mechanics().contains("Time Rewind"));
     assertEquals("Prioritize controller support.", brief.otherNotes());
   }
 

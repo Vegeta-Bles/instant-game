@@ -22,6 +22,7 @@ public final class ProjectBrief {
   private final List<String> genres;
   private final List<String> artStyles;
   private final List<String> musicStyles;
+  private final List<String> mechanics;
   private final Set<String> enabledAgents;
   private final Map<String, String> agentCommands;
   private final int iterations;
@@ -37,6 +38,7 @@ public final class ProjectBrief {
    * @param genres selected genres
    * @param artStyles selected art directions
    * @param musicStyles selected music directions
+   * @param mechanics selected gameplay mechanics
    * @param enabledAgents selected agents
    * @param agentCommands configured command lines keyed by agent (for example code/art/music)
    * @param iterations number of generation cycles
@@ -50,6 +52,7 @@ public final class ProjectBrief {
       List<String> genres,
       List<String> artStyles,
       List<String> musicStyles,
+      List<String> mechanics,
       Set<String> enabledAgents,
       Map<String, String> agentCommands,
       int iterations,
@@ -61,6 +64,7 @@ public final class ProjectBrief {
     this.genres = List.copyOf(Objects.requireNonNull(genres, "genres"));
     this.artStyles = List.copyOf(Objects.requireNonNull(artStyles, "artStyles"));
     this.musicStyles = List.copyOf(Objects.requireNonNull(musicStyles, "musicStyles"));
+    this.mechanics = List.copyOf(Objects.requireNonNull(mechanics, "mechanics"));
     this.enabledAgents =
         Collections.unmodifiableSet(new LinkedHashSet<>(Objects.requireNonNull(enabledAgents, "enabledAgents")));
     this.agentCommands =
@@ -123,6 +127,49 @@ public final class ProjectBrief {
         genres,
         artStyles,
         musicStyles,
+        List.of(),
+        enabledAgents,
+        agentCommands,
+        iterations,
+        "");
+  }
+
+  /**
+   * Creates a validated immutable project brief with default empty {@code otherNotes}.
+   *
+   * @param projectName game name from PRD
+   * @param oneLinePitch one-line summary
+   * @param coreLoop player loop description
+   * @param targetPlatforms target platform description
+   * @param genres selected genres
+   * @param artStyles selected art directions
+   * @param musicStyles selected music directions
+   * @param mechanics selected gameplay mechanics
+   * @param enabledAgents selected agents
+   * @param agentCommands configured command lines keyed by agent (for example code/art/music)
+   * @param iterations number of generation cycles
+   */
+  public ProjectBrief(
+      String projectName,
+      String oneLinePitch,
+      String coreLoop,
+      String targetPlatforms,
+      List<String> genres,
+      List<String> artStyles,
+      List<String> musicStyles,
+      List<String> mechanics,
+      Set<String> enabledAgents,
+      Map<String, String> agentCommands,
+      int iterations) {
+    this(
+        projectName,
+        oneLinePitch,
+        coreLoop,
+        targetPlatforms,
+        genres,
+        artStyles,
+        musicStyles,
+        mechanics,
         enabledAgents,
         agentCommands,
         iterations,
@@ -162,6 +209,11 @@ public final class ProjectBrief {
   /** @return selected music styles */
   public List<String> musicStyles() {
     return musicStyles;
+  }
+
+  /** @return selected gameplay mechanics */
+  public List<String> mechanics() {
+    return mechanics;
   }
 
   /** @return selected agent names */
@@ -246,6 +298,7 @@ public final class ProjectBrief {
         targetPlatforms,
         genres,
         artStyles,
+        List.of(),
         List.of(),
         enabledAgents,
         Map.of(),

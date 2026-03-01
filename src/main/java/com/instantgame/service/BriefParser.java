@@ -45,6 +45,7 @@ public final class BriefParser {
     List<String> genres = new ArrayList<>();
     List<String> artStyles = new ArrayList<>();
     List<String> musicStyles = new ArrayList<>();
+    List<String> mechanics = new ArrayList<>();
     Set<String> enabledAgents = new LinkedHashSet<>();
     Map<String, String> agentCommands = new LinkedHashMap<>();
 
@@ -98,6 +99,12 @@ public final class BriefParser {
           if (!customMusicStyle.isBlank()) {
             musicStyles.add(customMusicStyle);
           }
+        } else if (currentSection.contains("mechanic")
+            && key.toLowerCase(Locale.ROOT).startsWith("custom mechanic")) {
+          String customMechanic = normalizeValue(value);
+          if (!customMechanic.isBlank()) {
+            mechanics.add(customMechanic);
+          }
         }
       }
 
@@ -116,6 +123,8 @@ public final class BriefParser {
           artStyles.add(label);
         } else if (currentSection.contains("music style")) {
           musicStyles.add(label);
+        } else if (currentSection.contains("mechanic")) {
+          mechanics.add(label);
         } else if (currentSection.contains("agent")) {
           enabledAgents.add(normalizeAgentLabel(label));
         }
@@ -136,6 +145,7 @@ public final class BriefParser {
         genres,
         artStyles,
         musicStyles,
+        mechanics,
         enabledAgents,
         agentCommands,
         iterations,

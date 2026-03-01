@@ -149,6 +149,39 @@ public final class GenerateTemplateWriter {
       - Music Agent Command: <fill-me>
       - Command Contract: each command receives INSTANTGAME_PROMPT and should print markdown to stdout.
       
+      ## Gameplay Mechanics Checkboxes
+      - [ ] Point and Click
+      - [ ] Dialogue Choices
+      - [ ] Branching Narrative
+      - [ ] Inventory Management
+      - [ ] Item Crafting
+      - [ ] Base Building
+      - [ ] Resource Gathering
+      - [ ] Resource Management
+      - [ ] Stealth
+      - [ ] Parkour / Movement Tech
+      - [ ] Platforming
+      - [ ] Physics Puzzles
+      - [ ] Logic Puzzles
+      - [ ] Match-3
+      - [ ] Turn-Based Combat
+      - [ ] Real-Time Combat
+      - [ ] Deckbuilding Combat
+      - [ ] Auto-Battling
+      - [ ] Bullet Hell Patterns
+      - [ ] Rhythm / Timing
+      - [ ] Procedural Generation
+      - [ ] Permadeath
+      - [ ] Meta Progression
+      - [ ] Companion / Party Management
+      - [ ] Exploration / Discovery
+      - [ ] Co-op Multiplayer
+      - [ ] Competitive PvP
+      - [ ] Quick Time Events
+      - [ ] Dialogue Reputation System
+      - [ ] World Simulation / AI Ecology
+      - Custom Mechanic: <fill-me>
+      
       ## Core Mechanics & Systems
       - Primary Mechanics: <fill-me>
       - Controls / Input Model: <fill-me>
