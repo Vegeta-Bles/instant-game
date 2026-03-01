@@ -42,4 +42,18 @@ class InstantGameCliTest {
     assertEquals(1, exitCode);
     assertTrue(errors.toString().contains("Missing"));
   }
+
+  @Test
+  void versionFlagPrintsCurrentVersionViaCli() {
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    ByteArrayOutputStream errors = new ByteArrayOutputStream();
+
+    int exitCode =
+        InstantGameCli.run(
+            new String[] {"--version"}, new PrintStream(output), new PrintStream(errors), tempDir);
+
+    assertEquals(0, exitCode);
+    assertEquals("", errors.toString());
+    assertTrue(output.toString().contains("instantgame " + VersionInfo.currentVersion()));
+  }
 }

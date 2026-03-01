@@ -69,3 +69,8 @@ Output rules:
 - Unit tests must cover agent output generation paths.
 - Pipeline tests must validate the loop and required artifacts.
 - Command-level tests must verify error handling and happy paths.
+
+## CLI Version and Build Behavior
+
+- `bin/instantgame version` and `bin/instantgame --version` print the current CLI version.
+- The launcher rebuilds `target/instantgame.jar` when source/build files are newer than the jar.

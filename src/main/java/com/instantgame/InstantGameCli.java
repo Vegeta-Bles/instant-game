@@ -21,6 +21,7 @@ import java.util.Objects;
  * <ul>
  *   <li>{@code instantgame} or {@code instantgame init} to create a PRD template.</li>
  *   <li>{@code instantgame generate} to run the read-map-implement-test loop.</li>
+ *   <li>{@code instantgame version} to print the current CLI version.</li>
  * </ul>
  */
 public final class InstantGameCli {

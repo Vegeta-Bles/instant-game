@@ -52,6 +52,11 @@ When an agent command is configured in `GENERATE.md`:
 - Double-click `bin/instantgame.command` to run the init flow.
 - You can also run `bin/instantgame.command /path/to/your/project` from terminal.
 
+## Versioning
+
+- Run `bin/instantgame version` or `bin/instantgame --version` to print the current CLI version.
+- The launcher rebuilds `target/instantgame.jar` automatically when source files or build config are newer than the jar.
+
 ## Troubleshooting
 
 - If `GENERATE.md` is missing, run `bin/instantgame` first.

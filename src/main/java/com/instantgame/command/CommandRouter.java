@@ -1,5 +1,6 @@
 package com.instantgame.command;
 
+import com.instantgame.VersionInfo;
 import java.io.PrintStream;
 import java.nio.file.Path;
 import java.util.Locale;
@@ -12,6 +13,7 @@ public final class CommandRouter {
 
   private final InitCommand initCommand;
   private final GenerateCommand generateCommand;
+  private final String cliVersion;
 
   /**
    * Creates a router with command handlers.
@@ -20,8 +22,20 @@ public final class CommandRouter {
    * @param generateCommand handler for generation requests
    */
   public CommandRouter(InitCommand initCommand, GenerateCommand generateCommand) {
+    this(initCommand, generateCommand, VersionInfo.currentVersion());
+  }
+
+  /**
+   * Creates a router with command handlers and an explicit CLI version.
+   *
+   * @param initCommand handler for initialization requests
+   * @param generateCommand handler for generation requests
+   * @param cliVersion version label to print in help and version output
+   */
+  public CommandRouter(InitCommand initCommand, GenerateCommand generateCommand, String cliVersion) {
     this.initCommand = Objects.requireNonNull(initCommand, "initCommand");
     this.generateCommand = Objects.requireNonNull(generateCommand, "generateCommand");
+    this.cliVersion = Objects.requireNonNull(cliVersion, "cliVersion").trim();
   }
 
   /**
@@ -44,6 +58,10 @@ public final class CommandRouter {
     return switch (command) {
       case "init" -> initCommand.execute(workingDirectory, out, err);
       case "generate" -> generateCommand.execute(workingDirectory, out, err);
+      case "version", "--version", "-v" -> {
+        printVersion(out);
+        yield 0;
+      }
       case "help", "-h", "--help" -> {
         printHelp(out);
         yield 0;
@@ -62,9 +80,20 @@ public final class CommandRouter {
    * @param stream output destination
    */
   public void printHelp(PrintStream stream) {
+    stream.printf("instantgame %s%n", cliVersion);
     stream.println("Usage:");
     stream.println("  instantgame             # create instantgame/GENERATE.md");
     stream.println("  instantgame init        # same as above");
     stream.println("  instantgame generate    # run read -> map -> implement -> test loop");
+    stream.println("  instantgame version     # print CLI version");
+  }
+
+  /**
+   * Prints the CLI version.
+   *
+   * @param stream output destination
+   */
+  public void printVersion(PrintStream stream) {
+    stream.printf("instantgame %s%n", cliVersion);
   }
 }

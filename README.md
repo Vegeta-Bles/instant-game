@@ -35,7 +35,12 @@
 
 - `bin/instantgame` or `bin/instantgame init`: Create scaffold folder + PRD template.
 - `bin/instantgame generate`: Parse PRD and run the loop.
+- `bin/instantgame version` or `bin/instantgame --version`: Print current CLI version.
 - `bin/instantgame.command [target-directory]`: macOS double-clickable launcher that runs `init`.
+
+`bin/instantgame` auto-build behavior:
+
+- The launcher rebuilds the CLI jar when source files, `pom.xml`, or launcher scripts are newer than `target/instantgame.jar`.
 
 ## AI Agent Commands
 

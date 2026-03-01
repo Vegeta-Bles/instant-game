@@ -3,10 +3,31 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-JAR_PATH="$PROJECT_ROOT/target/instantgame-1.0.0.jar"
+JAR_PATH="$PROJECT_ROOT/target/instantgame.jar"
 
+needs_build=false
 if [[ ! -f "$JAR_PATH" ]]; then
-  if [[ -z "${JAVA_HOME:-}" ]] && [[ -x /usr/libexec/java_home ]]; then
+  needs_build=true
+else
+  NEWER_SOURCE="$(
+    find \
+      "$PROJECT_ROOT/pom.xml" \
+      "$PROJECT_ROOT/src" \
+      "$PROJECT_ROOT/bin/instantgame" \
+      "$PROJECT_ROOT/bin/instantgame.command" \
+      -type f \
+      -newer "$JAR_PATH" \
+      -print \
+      -quit \
+      2>/dev/null || true
+  )"
+  if [[ -n "$NEWER_SOURCE" ]]; then
+    needs_build=true
+  fi
+fi
+
+if [[ "$needs_build" == true ]]; then
+  if [[ -z "${JAVA_HOME:-}" || ! -x "${JAVA_HOME}/bin/java" ]] && [[ -x /usr/libexec/java_home ]]; then
     JAVA_HOME_CANDIDATE="$(/usr/libexec/java_home -v 21 2>/dev/null || true)"
     if [[ -n "$JAVA_HOME_CANDIDATE" ]]; then
       export JAVA_HOME="$JAVA_HOME_CANDIDATE"

@@ -3,6 +3,7 @@ package com.instantgame.command;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.instantgame.VersionInfo;
 import com.instantgame.service.BriefParser;
 import com.instantgame.service.GenerateTemplateWriter;
 import com.instantgame.service.PipelineRunner;
@@ -53,5 +54,23 @@ class CommandRouterTest {
 
     assertEquals(1, exitCode);
     assertTrue(errors.toString().contains("Unknown command"));
+  }
+
+  @Test
+  void printsVersionWhenRequested() {
+    CommandRouter router =
+        new CommandRouter(
+            new InitCommand(new GenerateTemplateWriter()),
+            new GenerateCommand(
+                new BriefParser(),
+                new PipelineRunner(List.of(new CodeAgent(), new ArtAgent(), new MusicAgent()))));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+    int exitCode =
+        router.route(new String[] {"version"}, tempDir, new PrintStream(output), System.err);
+
+    assertEquals(0, exitCode);
+    assertTrue(output.toString().contains("instantgame " + VersionInfo.currentVersion()));
   }
 }

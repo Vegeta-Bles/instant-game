@@ -5,7 +5,7 @@
 
   <groupId>com.instantgame</groupId>
   <artifactId>instantgame</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
   <name>instantgame</name>
   <description>CLI automation pipeline that turns a filled PRD into iterative game scaffolding artifacts.</description>
 
@@ -25,7 +25,22 @@
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    <finalName>instantgame</finalName>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.3.1</version>
+        <configuration>
+          <propertiesEncoding>UTF-8</propertiesEncoding>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
